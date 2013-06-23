@@ -106,7 +106,8 @@ status_t CameraProperties::loadProperties()
         }
     }
 
-    LOGV("mCamerasSupported = %d", mCamerasSupported);
+    services/java/com/android/server/PppoeService.ALOGV
+("mCamerasSupported = %d", mCamerasSupported);
     LOG_FUNCTION_NAME_EXIT;
     return ret;
 }

@@ -188,7 +188,7 @@ status_t AppCallbackNotifier::initialize()
     mNotificationThread = new NotificationThread(this);
     if(!mNotificationThread.get())
         {
-        CAMHAL_LOGEA("Couldn't create Notification thread");
+        CAMHAL_ALOGEA("Couldn't create Notification thread");
         return NO_MEMORY;
         }
 
@@ -196,7 +196,7 @@ status_t AppCallbackNotifier::initialize()
     status_t ret = mNotificationThread->run("NotificationThread", PRIORITY_URGENT_DISPLAY);
     if(ret!=NO_ERROR)
         {
-        CAMHAL_LOGEA("Couldn't run NotificationThread");
+        CAMHAL_ALOGEA("Couldn't run NotificationThread");
         mNotificationThread.clear();
         return ret;
         }
@@ -253,7 +253,7 @@ void AppCallbackNotifier::errorNotify(int error)
 {
     LOG_FUNCTION_NAME;
 
-    CAMHAL_LOGEB("AppCallbackNotifier received error %d", error);
+    CAMHAL_ALOGEB("AppCallbackNotifier received error %d", error);
 
     // If it is a fatal error abort here!
     if((error == CAMERA_ERROR_FATAL) || (error == CAMERA_ERROR_HARD)) {
@@ -268,7 +268,7 @@ void AppCallbackNotifier::errorNotify(int error)
           ( NULL != mNotifyCb ) &&
           ( mCameraHal->msgTypeEnabled(CAMERA_MSG_ERROR) ) )
       {
-        CAMHAL_LOGEB("AppCallbackNotifier mNotifyCb %d", error);
+        CAMHAL_ALOGEB("AppCallbackNotifier mNotifyCb %d", error);
         mNotifyCb(CAMERA_MSG_ERROR, CAMERA_ERROR_UNKNOWN, 0, mCallbackCookie);
       }
 
@@ -282,32 +282,32 @@ bool AppCallbackNotifier::notificationThread()
 
     LOG_FUNCTION_NAME;
 
-    //CAMHAL_LOGDA("Notification Thread waiting for message");
+    //CAMHAL_ALOGDA("Notification Thread waiting for message");
     ret = MSGUTILS::MessageQueue::waitForMsg(&mNotificationThread->msgQ(),
                                             &mEventQ,
                                             &mFrameQ,
                                             AppCallbackNotifier::NOTIFIER_TIMEOUT);
 
-    //CAMHAL_LOGDA("Notification Thread received message");
+    //CAMHAL_ALOGDA("Notification Thread received message");
 
     if (mNotificationThread->msgQ().hasMsg()) {
         ///Received a message from CameraHal, process it
-        CAMHAL_LOGDA("Notification Thread received message from Camera HAL");
+        CAMHAL_ALOGDA("Notification Thread received message from Camera HAL");
         shouldLive = processMessage();
         if(!shouldLive) {
-                CAMHAL_LOGDA("Notification Thread exiting.");
+                CAMHAL_ALOGDA("Notification Thread exiting.");
         }
     }
 
     if(mEventQ.hasMsg()) {
         ///Received an event from one of the event providers
-        CAMHAL_LOGDA("Notification Thread received an event from event provider (CameraAdapter)");
+        CAMHAL_ALOGDA("Notification Thread received an event from event provider (CameraAdapter)");
         notifyEvent();
      }
 
     if(mFrameQ.hasMsg()) {
        ///Received a frame from one of the frame providers
-       //CAMHAL_LOGDA("Notification Thread received a frame from frame provider (CameraAdapter)");
+       //CAMHAL_ALOGDA("Notification Thread received a frame from frame provider (CameraAdapter)");
        notifyFrame();
     }
 
@@ -343,7 +343,7 @@ void AppCallbackNotifier::notifyEvent()
 
             if ( NULL == evt )
                 {
-                CAMHAL_LOGEA("Invalid CameraHalEvent");
+                CAMHAL_ALOGEA("Invalid CameraHalEvent");
                 return;
                 }
 
@@ -461,8 +461,8 @@ static void copy2Dto1D(void *dst,
 
     unsigned int *y_uv = (unsigned int *)src;
 
-    CAMHAL_LOGDB("copy2Dto1D() y= 0x%x ; uv=0x%x.",y_uv[0], y_uv[1]);
-    CAMHAL_LOGDB("pixelFormat= %s; offset=%d; length=%d;width=%d,%d;stride=%d;",
+    CAMHAL_ALOGDB("copy2Dto1D() y= 0x%x ; uv=0x%x.",y_uv[0], y_uv[1]);
+    CAMHAL_ALOGDB("pixelFormat= %s; offset=%d; length=%d;width=%d,%d;stride=%d;",
 			pixelFormat,offset,length,width,height,stride);
 
     if (pixelFormat!=NULL) {
@@ -677,7 +677,7 @@ void AppCallbackNotifier::copyAndSendPreviewFrame(CameraFrame* frame, int32_t ms
         }
 
         if (!mPreviewMemory || !frame->mBuffer) {
-            CAMHAL_LOGDA("Error! One of the buffer is NULL");
+            CAMHAL_ALOGDA("Error! One of the buffer is NULL");
             goto exit;
         }
 
@@ -689,7 +689,7 @@ void AppCallbackNotifier::copyAndSendPreviewFrame(CameraFrame* frame, int32_t ms
         src = (uint8_t*)gralloc_hnd->base;
 #endif
         if (!src) {
-            CAMHAL_LOGDA("Error! Src Data buffer is NULL");
+            CAMHAL_ALOGDA("Error! Src Data buffer is NULL");
             goto exit;
         }
 
@@ -717,7 +717,7 @@ void AppCallbackNotifier::copyAndSendPreviewFrame(CameraFrame* frame, int32_t ms
                 }
             } else {
               if ((NULL == (void*)frame->mYuv[0]) || (NULL == (void*)frame->mYuv[1])){
-                CAMHAL_LOGEA("Error! One of the YUV Pointer is NULL");
+                CAMHAL_ALOGEA("Error! One of the YUV Pointer is NULL");
                 goto exit;
               }
               else{
@@ -754,7 +754,7 @@ status_t AppCallbackNotifier::dummyRaw()
     LOG_FUNCTION_NAME;
 
     if ( NULL == mRequestMemory ) {
-        CAMHAL_LOGEA("Can't allocate memory for dummy raw callback!");
+        CAMHAL_ALOGEA("Can't allocate memory for dummy raw callback!");
         return NO_INIT;
     }
 
@@ -766,7 +766,7 @@ status_t AppCallbackNotifier::dummyRaw()
             camera_memory_t *dummyRaw = mRequestMemory(-1, 1, 1, NULL);
 
             if ( NULL == dummyRaw ) {
-                CAMHAL_LOGEA("Dummy raw buffer allocation failed!");
+                CAMHAL_ALOGEA("Dummy raw buffer allocation failed!");
                 return NO_MEMORY;
             }
 
@@ -849,7 +849,7 @@ void AppCallbackNotifier::notifyFrame()
                            (CameraFrame::ENCODE_RAW_YUV420SP_TO_JPEG & frame->mQuirks)))
                 {
 
-                    LOGD("IMAGE_FRAME ENCODE_RAW.. %d", __LINE__);
+                    ALOGD("IMAGE_FRAME ENCODE_RAW.. %d", __LINE__);
                     int encode_quality = 100, tn_quality = 100;
                     int tn_width, tn_height;
                     unsigned int current_snapshot = 0;
@@ -860,7 +860,7 @@ void AppCallbackNotifier::notifyFrame()
                     if(raw_picture) {
                         buf = raw_picture->data;
                     }else{
-                        CAMHAL_LOGEA("Error! Main Jpeg encoder request memory fail!");
+                        CAMHAL_ALOGEA("Error! Main Jpeg encoder request memory fail!");
                         break;
                     }
 
@@ -972,12 +972,12 @@ void AppCallbackNotifier::notifyFrame()
                         }else{
                             free(tn_jpeg);
                             tn_jpeg = NULL;
-                            CAMHAL_LOGEA("Error! Thumbnail Jpeg encoder malloc memory fail!");
+                            CAMHAL_ALOGEA("Error! Thumbnail Jpeg encoder malloc memory fail!");
                         }
                     }
 #endif
 
-                    LOGD("IMAGE_FRAME ENCODE_RAW.. %d", __LINE__);
+                    ALOGD("IMAGE_FRAME ENCODE_RAW.. %d", __LINE__);
                     sp<Encoder_libjpeg> encoder = new Encoder_libjpeg(main_jpeg,
                                                       tn_jpeg,
                                                       AppCallbackNotifierEncoderCallback,
@@ -1042,7 +1042,7 @@ void AppCallbackNotifier::notifyFrame()
 
                             if( (NULL == videoMedatadaBufferMemory) || (NULL == videoMetadataBuffer) || (NULL == frame->mBuffer) )
                             {
-                                CAMHAL_LOGEA("Error! One of the video buffers is NULL");
+                                CAMHAL_ALOGEA("Error! One of the video buffers is NULL");
                                 break;
                             }
 
@@ -1099,14 +1099,14 @@ void AppCallbackNotifier::notifyFrame()
                             //TODO: Need to revisit this, should ideally be mapping the TILER buffer using mRequestMemory
                             if( NULL == frame->mBuffer)
                             {
-                                CAMHAL_LOGEA("Error! frame->mBuffer is NULL");
+                                CAMHAL_ALOGEA("Error! frame->mBuffer is NULL");
                                 break;
                             }
 #ifdef AMLOGIC_CAMERA_OVERLAY_SUPPORT
                             camera_memory_t* VideoCameraBufferMemoryBase = (camera_memory_t*)frame->mBuffer;
                             if((NULL == VideoCameraBufferMemoryBase)||(NULL == VideoCameraBufferMemoryBase->data))
                             {
-                                CAMHAL_LOGEA("Error! one of video buffer is NULL");
+                                CAMHAL_ALOGEA("Error! one of video buffer is NULL");
                                 break;
                             }
                             mDataCbTimestamp(frame->mTimestamp, CAMERA_MSG_VIDEO_FRAME, VideoCameraBufferMemoryBase, 0, mCallbackCookie);
@@ -1115,7 +1115,7 @@ void AppCallbackNotifier::notifyFrame()
                             private_handle_t* gralloc_hnd = (private_handle_t*)frame->mBuffer;
                             if((!VideoCameraBufferMemoryBase) ||(!gralloc_hnd->base))
                             {
-                                CAMHAL_LOGEA("Error! one of video buffer is NULL");
+                                CAMHAL_ALOGEA("Error! one of video buffer is NULL");
                                 break;
                             }
                             uint8_t* src = (uint8_t*)gralloc_hnd->base;
@@ -1159,7 +1159,7 @@ void AppCallbackNotifier::notifyFrame()
                 } else {
                     mFrameProvider->returnFrame(frame->mBuffer,
                                                 ( CameraFrame::FrameType ) frame->mFrameType);
-                    CAMHAL_LOGDB("Frame type 0x%x is still unsupported!", frame->mFrameType);
+                    CAMHAL_ALOGDB("Frame type 0x%x is still unsupported!", frame->mFrameType);
                 }
 
                 break;
@@ -1207,7 +1207,7 @@ void AppCallbackNotifier::frameCallback(CameraFrame* caFrame)
         }
         else
         {
-            CAMHAL_LOGEA("Not enough resources to allocate CameraFrame");
+            CAMHAL_ALOGEA("Not enough resources to allocate CameraFrame");
         }
     }
 
@@ -1265,7 +1265,7 @@ void AppCallbackNotifier::eventCallback(CameraHalEvent* chEvt)
             }
         else
             {
-            CAMHAL_LOGEA("Not enough resources to allocate CameraHalEvent");
+            CAMHAL_ALOGEA("Not enough resources to allocate CameraHalEvent");
             }
 
         }
@@ -1291,23 +1291,23 @@ bool AppCallbackNotifier::processMessage()
 
     LOG_FUNCTION_NAME;
 
-    CAMHAL_LOGDA("+Msg get...");
+    CAMHAL_ALOGDA("+Msg get...");
     mNotificationThread->msgQ().get(&msg);
-    CAMHAL_LOGDA("-Msg get...");
+    CAMHAL_ALOGDA("-Msg get...");
     bool ret = true;
 
     switch(msg.command)
       {
         case NotificationThread::NOTIFIER_EXIT:
           {
-            CAMHAL_LOGEA("Received NOTIFIER_EXIT command from Camera HAL");
+            CAMHAL_ALOGEA("Received NOTIFIER_EXIT command from Camera HAL");
             mNotifierState = AppCallbackNotifier::NOTIFIER_EXITED;
             ret = false;
             break;
           }
         default:
           {
-            CAMHAL_LOGEA("Error: ProcessMsg() command from Camera HAL");
+            CAMHAL_ALOGEA("Error: ProcessMsg() command from Camera HAL");
             break;
           }
       }
@@ -1356,7 +1356,7 @@ AppCallbackNotifier::~AppCallbackNotifier()
     if ( NULL != mEventProvider )
         {
         ///Deleting the event provider
-        CAMHAL_LOGDA("Stopping Event Provider");
+        CAMHAL_ALOGDA("Stopping Event Provider");
         delete mEventProvider;
         mEventProvider = NULL;
         }
@@ -1364,7 +1364,7 @@ AppCallbackNotifier::~AppCallbackNotifier()
     if ( NULL != mFrameProvider )
         {
         ///Deleting the frame provider
-        CAMHAL_LOGDA("Stopping Frame Provider");
+        CAMHAL_ALOGDA("Stopping Frame Provider");
         delete mFrameProvider;
         mFrameProvider = NULL;
         }
@@ -1388,7 +1388,7 @@ void AppCallbackNotifier::releaseSharedVideoBuffers()
             if(NULL != videoMedatadaBufferMemory)
             {
                 videoMedatadaBufferMemory->release(videoMedatadaBufferMemory);
-                CAMHAL_LOGDB("Released  videoMedatadaBufferMemory=0x%x", (uint32_t)videoMedatadaBufferMemory);
+                CAMHAL_ALOGDB("Released  videoMedatadaBufferMemory=0x%x", (uint32_t)videoMedatadaBufferMemory);
             }
         }
 
@@ -1409,7 +1409,7 @@ void AppCallbackNotifier::releaseSharedVideoBuffers()
             if(NULL != VideoCameraBufferMemoryBase)
             {
                 VideoCameraBufferMemoryBase->release(VideoCameraBufferMemoryBase);
-                CAMHAL_LOGDB("Released  VideoCameraBufferMemoryBase=0x%x", (uint32_t)VideoCameraBufferMemoryBase);
+                CAMHAL_ALOGDB("Released  VideoCameraBufferMemoryBase=0x%x", (uint32_t)VideoCameraBufferMemoryBase);
             }
         }
 #endif
@@ -1431,7 +1431,7 @@ void AppCallbackNotifier::setEventProvider(int32_t eventMask, MessageNotifier * 
     mEventProvider = new EventProvider(eventNotifier, this, eventCallbackRelay);
     if ( NULL == mEventProvider )
         {
-        CAMHAL_LOGEA("Error in creating EventProvider");
+        CAMHAL_ALOGEA("Error in creating EventProvider");
         }
     else
         {
@@ -1449,7 +1449,7 @@ void AppCallbackNotifier::setFrameProvider(FrameNotifier *frameNotifier)
     mFrameProvider = new FrameProvider(frameNotifier, this, frameCallbackRelay);
     if ( NULL == mFrameProvider )
     {
-        CAMHAL_LOGEA("Error in creating FrameProvider");
+        CAMHAL_ALOGEA("Error in creating FrameProvider");
     }
     else
     {
@@ -1475,13 +1475,13 @@ status_t AppCallbackNotifier::startPreviewCallbacks(CameraParameters &params, vo
 
     if ( NULL == mFrameProvider )
     {
-        CAMHAL_LOGEA("Trying to start video recording without FrameProvider");
+        CAMHAL_ALOGEA("Trying to start video recording without FrameProvider");
         return -EINVAL;
     }
 
     if ( mPreviewing )
     {
-        CAMHAL_LOGDA("+Already previewing");
+        CAMHAL_ALOGDA("+Already previewing");
         return NO_INIT;
     }
 
@@ -1557,7 +1557,7 @@ void AppCallbackNotifier::useVideoBuffers(bool useVideoBuffers)
     LOG_FUNCTION_NAME;
 #ifndef AMLOGIC_CAMERA_OVERLAY_SUPPORT
     mUseVideoBuffers = useVideoBuffers;
-    CAMHAL_LOGDB("Set mUseVideoBuffers as %d",(uint32_t)useVideoBuffers);
+    CAMHAL_ALOGDB("Set mUseVideoBuffers as %d",(uint32_t)useVideoBuffers);
 #endif
     LOG_FUNCTION_NAME_EXIT;
 }
@@ -1586,7 +1586,7 @@ status_t AppCallbackNotifier::stopPreviewCallbacks()
 
     if ( NULL == mFrameProvider )
     {
-        CAMHAL_LOGEA("Trying to stop preview callbacks without FrameProvider");
+        CAMHAL_ALOGEA("Trying to stop preview callbacks without FrameProvider");
         return -EINVAL;
     }
 
@@ -1613,7 +1613,7 @@ status_t AppCallbackNotifier::stopPreviewCallbacks()
 status_t AppCallbackNotifier::useMetaDataBufferMode(bool enable)
 {
     mUseMetaDataBufferMode = enable;
-    CAMHAL_LOGDB("Set mUseMetaDataBufferMode as %d",(uint32_t)enable);
+    CAMHAL_ALOGDB("Set mUseMetaDataBufferMode as %d",(uint32_t)enable);
     return NO_ERROR;
 }
 
@@ -1628,7 +1628,7 @@ status_t AppCallbackNotifier::startRecording()
 
     if ( NULL == mFrameProvider )
     {
-        CAMHAL_LOGEA("Trying to start video recording without FrameProvider");
+        CAMHAL_ALOGEA("Trying to start video recording without FrameProvider");
         ret = -1;
     }
 
@@ -1662,7 +1662,7 @@ status_t AppCallbackNotifier::initSharedVideoBuffers(void *buffers, uint32_t *of
 
         if(NULL == buffers)
         {
-            CAMHAL_LOGEA("Error! Video buffers are NULL");
+            CAMHAL_ALOGEA("Error! Video buffers are NULL");
             return BAD_VALUE;
         }
         bufArr = (uint32_t *) buffers;
@@ -1672,13 +1672,13 @@ status_t AppCallbackNotifier::initSharedVideoBuffers(void *buffers, uint32_t *of
             videoMedatadaBufferMemory = mRequestMemory(-1, sizeof(video_metadata_t), 1, NULL);
             if((NULL == videoMedatadaBufferMemory) || (NULL == videoMedatadaBufferMemory->data))
             {
-                CAMHAL_LOGEA("Error! Could not allocate memory for Video Metadata Buffers");
+                CAMHAL_ALOGEA("Error! Could not allocate memory for Video Metadata Buffers");
                 return NO_MEMORY;
             }
 
             mVideoMetadataBufferMemoryMap.add(bufArr[i], (uint32_t)(videoMedatadaBufferMemory));
             mVideoMetadataBufferReverseMap.add((uint32_t)(videoMedatadaBufferMemory->data), bufArr[i]);
-            CAMHAL_LOGDB("bufArr[%d]=0x%x, videoMedatadaBufferMemory=0x%x, videoMedatadaBufferMemory->data=0x%x",
+            CAMHAL_ALOGDB("bufArr[%d]=0x%x, videoMedatadaBufferMemory=0x%x, videoMedatadaBufferMemory->data=0x%x",
                     i, bufArr[i], (uint32_t)videoMedatadaBufferMemory, (uint32_t)videoMedatadaBufferMemory->data);
 
             if (vidBufs != NULL)
@@ -1696,7 +1696,7 @@ status_t AppCallbackNotifier::initSharedVideoBuffers(void *buffers, uint32_t *of
 
         if(NULL == buffers)
         {
-            CAMHAL_LOGEA("Error! Video buffers are NULL");
+            CAMHAL_ALOGEA("Error! Video buffers are NULL");
             return BAD_VALUE;
         }
         bufArr = (uint32_t *) buffers;
@@ -1710,12 +1710,12 @@ status_t AppCallbackNotifier::initSharedVideoBuffers(void *buffers, uint32_t *of
  #endif
             if((NULL == VideoCameraBufferMemoryBase) || (NULL == VideoCameraBufferMemoryBase->data))
             {
-                CAMHAL_LOGEA("Error! Could not allocate memory for Video Metadata Buffers");
+                CAMHAL_ALOGEA("Error! Could not allocate memory for Video Metadata Buffers");
                 return NO_MEMORY;
             }
             mVideoHeaps.add(bufArr[i], (uint32_t)(VideoCameraBufferMemoryBase));
             mVideoMap.add((uint32_t)(VideoCameraBufferMemoryBase->data),bufArr[i]);
-            CAMHAL_LOGDB("bufArr[%d]=0x%x, VideoCameraBufferMemoryBase=0x%x, VideoCameraBufferMemoryBase->data=0x%x",
+            CAMHAL_ALOGDB("bufArr[%d]=0x%x, VideoCameraBufferMemoryBase=0x%x, VideoCameraBufferMemoryBase->data=0x%x",
                     i, bufArr[i], (uint32_t)VideoCameraBufferMemoryBase, (uint32_t)VideoCameraBufferMemoryBase->data);
         }
     }
@@ -1735,7 +1735,7 @@ status_t AppCallbackNotifier::stopRecording()
 
     if ( NULL == mFrameProvider )
     {
-        CAMHAL_LOGEA("Trying to stop video recording without FrameProvider");
+        CAMHAL_ALOGEA("Trying to stop video recording without FrameProvider");
         ret = -1;
     }
 
@@ -1767,13 +1767,13 @@ status_t AppCallbackNotifier::releaseRecordingFrame(const void* mem)
     LOG_FUNCTION_NAME;
     if ( NULL == mFrameProvider )
     {
-        CAMHAL_LOGEA("Trying to stop video recording without FrameProvider");
+        CAMHAL_ALOGEA("Trying to stop video recording without FrameProvider");
         ret = -1;
     }
 
     if ( NULL == mem )
     {
-        CAMHAL_LOGEA("Video Frame released is invalid");
+        CAMHAL_ALOGEA("Video Frame released is invalid");
         ret = -1;
     }
 
@@ -1792,7 +1792,7 @@ status_t AppCallbackNotifier::releaseRecordingFrame(const void* mem)
     else
     {
         frame = (void *)mVideoMap.valueFor((uint32_t)mem);
-        //CAMHAL_LOGDB("release recording mem.0x%x, frame:0x%x",(uint32_t)mem,(uint32_t)frame);
+        //CAMHAL_ALOGDB("release recording mem.0x%x, frame:0x%x",(uint32_t)mem,(uint32_t)frame);
     }
 
     if ( NO_ERROR == ret )
@@ -1828,7 +1828,7 @@ status_t AppCallbackNotifier::start()
     LOG_FUNCTION_NAME;
     if(mNotifierState==AppCallbackNotifier::NOTIFIER_STARTED)
     {
-        CAMHAL_LOGDA("AppCallbackNotifier already running");
+        CAMHAL_ALOGDA("AppCallbackNotifier already running");
         LOG_FUNCTION_NAME_EXIT;
         return ALREADY_EXISTS;
     }
@@ -1838,7 +1838,7 @@ status_t AppCallbackNotifier::start()
     if(!mFrameProvider)
     {
         ///AppCallbackNotifier not properly initialized
-        CAMHAL_LOGEA("AppCallbackNotifier not properly initialized - Frame provider is NULL");
+        CAMHAL_ALOGEA("AppCallbackNotifier not properly initialized - Frame provider is NULL");
         LOG_FUNCTION_NAME_EXIT;
         return NO_INIT;
     }
@@ -1847,14 +1847,14 @@ status_t AppCallbackNotifier::start()
     ///@todo Modify here when there is an array of event providers
     if(!mEventProvider)
     {
-        CAMHAL_LOGEA("AppCallbackNotifier not properly initialized - Event provider is NULL");
+        CAMHAL_ALOGEA("AppCallbackNotifier not properly initialized - Event provider is NULL");
         LOG_FUNCTION_NAME_EXIT;
         ///AppCallbackNotifier not properly initialized
         return NO_INIT;
     }
 
     mNotifierState = AppCallbackNotifier::NOTIFIER_STARTED;
-    CAMHAL_LOGDA(" --> AppCallbackNotifier NOTIFIER_STARTED \n");
+    CAMHAL_ALOGDA(" --> AppCallbackNotifier NOTIFIER_STARTED \n");
 
     gEncoderQueue.clear();
 
@@ -1870,7 +1870,7 @@ status_t AppCallbackNotifier::stop()
 
     if(mNotifierState!=AppCallbackNotifier::NOTIFIER_STARTED)
     {
-        CAMHAL_LOGDA("AppCallbackNotifier already in stopped state");
+        CAMHAL_ALOGDA("AppCallbackNotifier already in stopped state");
         LOG_FUNCTION_NAME_EXIT;
         return ALREADY_EXISTS;
     }
@@ -1879,7 +1879,7 @@ status_t AppCallbackNotifier::stop()
         Mutex::Autolock lock(mLock);
 
         mNotifierState = AppCallbackNotifier::NOTIFIER_STOPPED;
-        CAMHAL_LOGDA(" --> AppCallbackNotifier NOTIFIER_STOPPED \n");
+        CAMHAL_ALOGDA(" --> AppCallbackNotifier NOTIFIER_STOPPED \n");
     }
 
     while(!gEncoderQueue.isEmpty()) {

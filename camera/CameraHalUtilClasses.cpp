@@ -154,37 +154,37 @@ status_t CameraArea::checkArea(ssize_t top,
     }
 
     if ( ( CameraArea::WEIGHT_MIN > weight ) ||  ( CameraArea::WEIGHT_MAX < weight ) ) {
-        CAMHAL_LOGEB("Camera area weight is invalid %d", (uint32_t)weight);
+        CAMHAL_ALOGEB("Camera area weight is invalid %d", (uint32_t)weight);
         return -EINVAL;
     }
 
     if ( ( CameraArea::TOP > top ) || ( CameraArea::BOTTOM < top ) ) {
-        CAMHAL_LOGEB("Camera area top coordinate is invalid %d", (uint32_t)top );
+        CAMHAL_ALOGEB("Camera area top coordinate is invalid %d", (uint32_t)top );
         return -EINVAL;
     }
 
     if ( ( CameraArea::TOP > bottom ) || ( CameraArea::BOTTOM < bottom ) ) {
-        CAMHAL_LOGEB("Camera area bottom coordinate is invalid %d", (uint32_t)bottom );
+        CAMHAL_ALOGEB("Camera area bottom coordinate is invalid %d", (uint32_t)bottom );
         return -EINVAL;
     }
 
     if ( ( CameraArea::LEFT > left ) || ( CameraArea::RIGHT < left ) ) {
-        CAMHAL_LOGEB("Camera area left coordinate is invalid %d", (uint32_t)left );
+        CAMHAL_ALOGEB("Camera area left coordinate is invalid %d", (uint32_t)left );
         return -EINVAL;
     }
 
     if ( ( CameraArea::LEFT > right ) || ( CameraArea::RIGHT < right ) ) {
-        CAMHAL_LOGEB("Camera area right coordinate is invalid %d", (uint32_t)right );
+        CAMHAL_ALOGEB("Camera area right coordinate is invalid %d", (uint32_t)right );
         return -EINVAL;
     }
 
     if ( left >= right ) {
-        CAMHAL_LOGEA("Camera area left larger than right");
+        CAMHAL_ALOGEA("Camera area left larger than right");
         return -EINVAL;
     }
 
     if ( top >= bottom ) {
-        CAMHAL_LOGEA("Camera area top larger than bottom");
+        CAMHAL_ALOGEA("Camera area top larger than bottom");
         return -EINVAL;
     }
 
@@ -231,7 +231,7 @@ status_t CameraArea::parseAreas(const char *area,
         pStart = pArea;
         if ( NULL == pStart )
             {
-            CAMHAL_LOGEA("Parsing of the left area coordinate failed!");
+            CAMHAL_ALOGEA("Parsing of the left area coordinate failed!");
             ret = -EINVAL;
             break;
             }
@@ -242,7 +242,7 @@ status_t CameraArea::parseAreas(const char *area,
 
         if ( sep != *pEnd )
             {
-            CAMHAL_LOGEA("Parsing of the top area coordinate failed!");
+            CAMHAL_ALOGEA("Parsing of the top area coordinate failed!");
             ret = -EINVAL;
             break;
             }
@@ -253,7 +253,7 @@ status_t CameraArea::parseAreas(const char *area,
 
         if ( sep != *pEnd )
             {
-            CAMHAL_LOGEA("Parsing of the right area coordinate failed!");
+            CAMHAL_ALOGEA("Parsing of the right area coordinate failed!");
             ret = -EINVAL;
             break;
             }
@@ -264,7 +264,7 @@ status_t CameraArea::parseAreas(const char *area,
 
         if ( sep != *pEnd )
             {
-            CAMHAL_LOGEA("Parsing of the bottom area coordinate failed!");
+            CAMHAL_ALOGEA("Parsing of the bottom area coordinate failed!");
             ret = -EINVAL;
             break;
             }
@@ -275,7 +275,7 @@ status_t CameraArea::parseAreas(const char *area,
 
         if ( sep != *pEnd )
             {
-            CAMHAL_LOGEA("Parsing of the weight area coordinate failed!");
+            CAMHAL_ALOGEA("Parsing of the weight area coordinate failed!");
             ret = -EINVAL;
             break;
             }
@@ -286,7 +286,7 @@ status_t CameraArea::parseAreas(const char *area,
 
         if ( endToken != *pEnd )
             {
-            CAMHAL_LOGEA("Malformed area!");
+            CAMHAL_ALOGEA("Malformed area!");
             ret = -EINVAL;
             break;
             }
