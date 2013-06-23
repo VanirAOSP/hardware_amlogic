@@ -1,3 +1,5 @@
+ifdef TARGET_USE_AMLOGIC 
+
 LOCAL_PATH:=$(call my-dir)
 
 include $(CLEAR_VARS)
@@ -71,4 +73,5 @@ LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)/boot
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 include $(BUILD_PREBUILT)
 
+endif
 endif
