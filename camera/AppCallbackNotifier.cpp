@@ -23,7 +23,7 @@
 #include "CameraHal.h"
 #include "VideoMetadata.h"
 #include "Encoder_libjpeg.h"
-#include <MetadataBufferType.h>
+#include <media/hardware/MetadataBufferType.h>
 #include <ui/GraphicBuffer.h>
 #include <ui/GraphicBufferMapper.h>
 #include "NV12_resize.h"
